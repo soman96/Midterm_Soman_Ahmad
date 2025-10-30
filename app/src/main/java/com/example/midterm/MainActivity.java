@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Integer> table;
     private ArrayList<Integer> numberHistory;
     private ArrayAdapter<Integer> adapter;
-
+    private Button clearBtn;
 
 
     @Override
@@ -46,9 +46,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tableBtn = findViewById(R.id.btnTable);
         tableList = findViewById(R.id.listView);
         historyBtn = findViewById(R.id.btnHistory);
+        clearBtn = findViewById(R.id.btnClear);
 
         tableBtn.setOnClickListener(this);
         historyBtn.setOnClickListener(this);
+        clearBtn.setOnClickListener(this);
 
         numberHistory = new ArrayList<>();
         table = new ArrayList<>();
@@ -83,6 +85,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putIntegerArrayListExtra("history", numberHistory);
             startActivity(intent);
         }
+
+        if (id == R.id.btnClear) {
+            clearConfirmation();
+        }
+    }
+
+    private void clearConfirmation() {
+        new AlertDialog.Builder(this)
+                .setTitle("Clear Table")
+                .setMessage("Are you sure you want to clear the table?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // numberHistory.clear();
+                    table.clear();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Table cleared", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void generateTable() {
@@ -106,5 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, table);
         tableList.setAdapter(adapter);
         numberHistory.add(number);
+
     }
 }
