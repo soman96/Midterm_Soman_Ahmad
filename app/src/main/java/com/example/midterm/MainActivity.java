@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Integer> numberHistory;
     private ArrayAdapter<Integer> adapter;
     private Button clearBtn;
+    private static final String KEY_TABLE = "key_table";
+    private static final String KEY_HISTORY = "key_history";
 
 
     @Override
@@ -52,8 +55,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         historyBtn.setOnClickListener(this);
         clearBtn.setOnClickListener(this);
 
-        numberHistory = new ArrayList<>();
-        table = new ArrayList<>();
+        // get saved state if there is
+        if (savedInstanceState != null) {
+            table = savedInstanceState.getIntegerArrayList(KEY_TABLE);
+            numberHistory = savedInstanceState.getIntegerArrayList(KEY_HISTORY);
+        } else {
+            table = new ArrayList<>();
+            numberHistory = new ArrayList<>();
+        }
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, table);
+        tableList.setAdapter(adapter);
 
         tableList.setOnItemLongClickListener((parent, view, position, id) -> {
             int selected = table.get(position);
@@ -69,6 +81,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .show();
             return true;
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntegerArrayList(KEY_TABLE, table);
+        outState.putIntegerArrayList(KEY_HISTORY, numberHistory);
     }
 
     @Override
@@ -93,13 +112,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void clearConfirmation() {
         new AlertDialog.Builder(this)
-                .setTitle("Clear Table")
-                .setMessage("Are you sure you want to clear the table?")
+                .setTitle("Clear All")
+                .setMessage("Are you sure you want to clear the table and history?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    // numberHistory.clear();
+                    numberHistory.clear();
                     table.clear();
                     adapter.notifyDataSetChanged();
-                    Toast.makeText(this, "Table cleared", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Table and history cleared", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -108,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void generateTable() {
         String numberText = number.getText().toString();
 
-        int number;
+        int n;
 
         try {
-            number = Integer.parseInt(numberText);
+            n = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Invalid number", Toast.LENGTH_SHORT).show();
             return;
@@ -120,12 +139,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         table.clear();
 
         for (int i = 1; i <= 10; i++) {
-            table.add(number * i);
+            table.add(n * i);
         }
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, table);
-        tableList.setAdapter(adapter);
-        numberHistory.add(number);
+        numberHistory.add(n);
+        adapter.notifyDataSetChanged();
 
+        // clear the field
+        number.setText("");
     }
 }

@@ -2,6 +2,7 @@ package com.example.midterm;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -17,8 +18,7 @@ public class HistoryActivity2 extends AppCompatActivity {
     private ListView historyList;
     private ArrayAdapter<Integer> adapter;
     private ArrayList<Integer> history;
-
-
+    private Button returnBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +31,17 @@ public class HistoryActivity2 extends AppCompatActivity {
             return insets;
         });
 
+        returnBtn = findViewById(R.id.btnReturn);
+
         history = getIntent().getIntegerArrayListExtra("history");
 
         historyList = findViewById(R.id.historyList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, history);
         historyList.setAdapter(adapter);
+
+        returnBtn.setOnClickListener(v -> {
+            finish();
+        });
     }
+
 }
