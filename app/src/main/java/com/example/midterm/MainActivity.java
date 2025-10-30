@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int selected = table.get(position);
             new AlertDialog.Builder(this)
                     .setTitle("Delete Item")
-                    .setMessage("Delete this item?" + selected)
+                    .setMessage("Delete " + selected + "?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         table.remove(position);
                         adapter.notifyDataSetChanged();
