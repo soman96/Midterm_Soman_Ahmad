@@ -9,12 +9,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button tableBtn;
     private ListView tableList;
     private Button historyBtn;
+    private ArrayList<Integer> table;
     private ArrayList<Integer> numberHistory;
     private ArrayAdapter<Integer> adapter;
 
@@ -46,6 +49,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tableBtn.setOnClickListener(this);
         historyBtn.setOnClickListener(this);
 
+        numberHistory = new ArrayList<>();
+        table = new ArrayList<>();
+
+        tableList.setOnItemLongClickListener((parent, view, position, id) -> {
+            int selected = table.get(position);
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Item")
+                    .setMessage("Delete this item?" + selected)
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        table.remove(position);
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(this, "Deleted: " + selected, Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+            return true;
+        });
     }
 
     @Override
@@ -69,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        ArrayList<Integer> table = new ArrayList<>();
+        table.clear();
+
         for (int i = 1; i <= 10; i++) {
             table.add(number * i);
         }
