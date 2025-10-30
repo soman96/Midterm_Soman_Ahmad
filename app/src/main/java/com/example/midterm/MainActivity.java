@@ -1,5 +1,6 @@
 package com.example.midterm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -74,6 +75,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (id == R.id.btnTable) {
             generateTable();
+        }
+
+        if (id == R.id.btnHistory) {
+            // call the history activity
+            Intent intent = new Intent(this, HistoryActivity2.class);
+            intent.putIntegerArrayListExtra("history", numberHistory);
+            startActivity(intent);
         }
     }
 
